@@ -1,0 +1,22 @@
+#!/bin/bash
+# Moverse al directorio de la aplicación
+cd /home/ec2-user/app
+
+# Verificar si Node.js está instalado, si no, instalarlo (para Amazon Linux 2023)
+if ! command -v node &> /dev/null
+then
+    sudo dnf install -y nodejs
+fi
+
+# Instalar las dependencias del proyecto
+npm install
+
+# Instalar PM2 globalmente para mantener la app corriendo en segundo plano
+if ! command -v pm2 &> /dev/null
+then
+    sudo npm install pm2 -g
+fi
+
+# Detener ejecuciones previas y arrancar la aplicación
+pm2 stop all || true
+pm2 start app.js --name "datavision-app"
